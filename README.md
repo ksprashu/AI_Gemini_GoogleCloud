@@ -1,2 +1,2 @@
-# L200_AI_Upskilling
-AI Upskilling Challenge with Gemini and Google Cloud
+# AI with Gemini and Google Cloud
+AI Learning with Gemini and Google Cloud
