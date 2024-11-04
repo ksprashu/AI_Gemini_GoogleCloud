@@ -30,9 +30,15 @@ def answer_query(message: str, history: list):
 demo = gr.ChatInterface(
     answer_query, 
     type="messages",
-    textbox=gr.Textbox(placeholder="Type in your travel query..."),
+    textbox=gr.Textbox(placeholder="Type in your travel query...", autofocus=True),
     title="Your Friendly Travel Advisor",
+    autofocus=True,
+    examples=[
+        ['Give me ideas for a beach vacation', None],
+        ['I want to go on a 3 day safari in Masai Mara. When is the best time to go?', None],
+        ['Build a 5-day itinerary of the best things to do in Bhutan.', None],
+        ['What are the top 5 street food places in Bangalore?', None]
+    ]
     )
-
 
 demo.launch()

@@ -45,7 +45,12 @@ def generate_session_id():
 # Gets the latest system prompt for a given model
 def get_system_prompt(model_name):
     """Gets the latest system prompt for a given model."""
-    with open('prompts.json') as f:
+    # Get the directory of helper.py
+    helper_dir = os.path.dirname(os.path.abspath(__file__))
+    # Construct the path to config.json
+    config_path = os.path.join(helper_dir, 'prompts.json')
+
+    with open(config_path) as f:
         data = json.load(f)
     
     # find the latest version of the prompt
