@@ -3,6 +3,7 @@
 import vertexai
 from vertexai.generative_models import GenerativeModel, ChatSession
 import os
+import time
 import logging
 # logger = logging.getLogger(__name__)
 
@@ -22,6 +23,7 @@ model = GenerativeModel(
     system_instruction=[
         "You are a helpful travel advisor.",
         "Your mission is to help the user plan their next holiday by providing them with travel recommendations and an itinerary if requested.",
+        "Use markdown format in your responses. Ensure the response is well formatted in paragraphs and lines. Use lot of smileys. Be Fun!",
         "Start by greeting the user in a cheerful way and ask where they'd like to go.",
         "You can ask the user for follow-up questions by asking one question at a time.",
         "Remember the user's preferences from their inputs and ask question or suggest recommendations accordingly.",
@@ -38,11 +40,23 @@ def get_response(message: str, history: list):
     """Generate a response for user's query"""
 
     text_response = []
-    logging.info(f'querying gemini: {message}')
+    # logging.info(f'querying gemini: {message}')
     prompt = message
 
+    start_time = time.time() * 1000
     response = chat_session.send_message(prompt)
-    logging.info(f'response: {response.text}')
+    endtime = time.time() * 1000
+
+    log_data = {
+        'prompt': prompt,
+        'response': response.text, 
+        'start_time': start_time,
+        'end_time': endtime,
+        'duration': endtime - start_time
+    }
+    logging.info(f'chat turn complete for query - {prompt}', 
+                 extra={"json_fields": log_data})
+    # logging.info(f'response: {response.text}')
 
     return response.text
 
