@@ -51,8 +51,6 @@ def store_chat(session_id, message, response, history):
 
 def answer_query(message: str, history: list): 
     """Generate a completion for user's query"""
-    # logging.info(f'user: {message}')
-    # logger.info(f'history: {history}')
     logging.info(f"Calling Model... session: {session_id.value}",
                  extra={"json_fields": {"session_id": session_id.value}})
     response = genai.get_response(message, history)
