@@ -1,4 +1,6 @@
 # create a chat interfcace using gradio
+# week1: create chat agents with gemini and gemma
+
 import gemini_vertex as genai
 import gradio as gr
 import uuid

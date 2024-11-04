@@ -1,4 +1,5 @@
 # create a chat interfcace using gradio
+# week1: create chat agents with gemini and gemma
 # week2: include prompt management using a version controlled config file
 
 import gemini_vertex as genai
