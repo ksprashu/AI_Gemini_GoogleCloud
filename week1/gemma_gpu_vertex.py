@@ -3,6 +3,7 @@
 from vertexai.generative_models import GenerativeModel, ChatSession
 from google.cloud import aiplatform
 
+import dotenv
 import os
 import logging
 # logger = logging.getLogger(__name__)
@@ -12,8 +13,9 @@ client = google.cloud.logging.Client()
 client.setup_logging()
 
 # fetch project_id and location from environment
+dotenv.load_dotenv()
 project_id = os.environ.get("PROJECT_ID")
-location = os.environ.get("LOCATION")
+location = os.environ.get("REGION")
 bucket = os.environ.get("AI_BUCKET")
 
 # init vertex ai with project_id and location
