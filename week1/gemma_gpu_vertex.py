@@ -38,6 +38,7 @@ system_instruction=[
         "End the conversation when appropriate by hoping they have a good time, and asking if you can help in any other way."
     ]
 
+
 def get_prompt(message: str, history: list) -> str:
     """Get the system instruction, history, and user prompt as a single string """
     prompt = ""
@@ -48,7 +49,7 @@ def get_prompt(message: str, history: list) -> str:
         if msg['role'] == 'user':
             prompt += "\nUser: " + msg['content']
         elif msg['role'] == 'assistant':
-            prompt += "\nModel: " + msg['content']
+            prompt += "\nAssistant: " + msg['content']
     
     # finally insert the user message as the final prompt
     prompt += "\nUser: " + message
