@@ -75,38 +75,39 @@ def get_eval_responses(model, eval_queries):
     # display an ascii progress bar for the queries
     print(f"Evaluating queries for model: {model.get_name()}")
     total_items = len(eval_queries)
-    for i, query in enumerate(eval_queries):
+    for i, prompt in enumerate(eval_queries):
         try:
-            response = model.get_response(query, [])
-            eval_responses.append({"query": query, "response": response})
+            response = model.get_response(prompt, [])
+            eval_responses.append({"prompt": prompt, "response": response})
         except Exception as e:
-            print(f"Error generating response for query {query}: {e}")
-            eval_responses.append({"query": query, "response": "Error generating response"})
+            print(f"Error generating response for prompt {prompt}: {e}")
+            eval_responses.append({"prompt": prompt, "response": "Error generating response"})
 
         print_progress_bar(i + 1, total_items, prefix='Progress:', suffix='Complete', length=50)
+        model.start_new_chat()
         time.sleep(1) # sleep for a second to avoid quota errors
 
     return eval_responses
 
 
 if __name__ == "__main__":
-    # eval_queries = generate_eval_datasets()
-    # # write to a file
-    # with open('eval_queries.json', 'w') as f:
-    #     json.dump(eval_queries, f)
+    eval_queries = generate_eval_datasets()
+    # write to a file
+    with open('eval_queries.json', 'w') as f:
+        json.dump(eval_queries, f)
 
     # read the queries from the files
     with open('eval_queries.json', 'r') as f:
         eval_queries = json.load(f)
 
     # run the query against each model
-    # gemini_responses = get_eval_responses(model_gemini, eval_queries)
-    # with open('gemini_responses.json', 'w') as f:
-    #     json.dump(gemini_responses, f)
+    gemini_responses = get_eval_responses(model_gemini, eval_queries)
+    with open('gemini_responses.json', 'w') as f:
+        json.dump(gemini_responses, f)
 
-    # tuned_responses = get_eval_responses(model_tuned, eval_queries)
-    # with open('tuned_responses.json', 'w') as f:
-    #     json.dump(tuned_responses, f)
+    tuned_responses = get_eval_responses(model_tuned, eval_queries)
+    with open('tuned_responses.json', 'w') as f:
+        json.dump(tuned_responses, f)
 
     gemma_responses = get_eval_responses(model_gemma, eval_queries)
     with open('gemma_responses.json', 'w') as f:

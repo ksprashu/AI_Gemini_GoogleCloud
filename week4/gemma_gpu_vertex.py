@@ -53,6 +53,13 @@ def get_response(message: str, history: list):
 
     return response
 
+
+def start_new_chat():
+    """erases the current session and starts a new chat session"""
+    global chat_model
+    chat_model = ChatState(model=endpoint, system=helper.get_system_prompt('gemma2'))
+
+
 # {
 #     "instances": [
 #         {
