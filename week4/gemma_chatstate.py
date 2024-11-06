@@ -78,7 +78,6 @@ class ChatState():
     ]
 
     response = self.model.predict(instances=instances)
-    print(response)
 
     result = response.predictions[0].strip()
     self.add_to_history_as_model(result)

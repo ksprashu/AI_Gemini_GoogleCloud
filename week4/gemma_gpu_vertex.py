@@ -39,8 +39,6 @@ def get_response(message: str, history: list):
     response = chat_model.send_message(message)
     endtime = time.time() * 1000 
 
-    print(response)
-
     log_data = {
         'prompt': message,
         'response': response, 
