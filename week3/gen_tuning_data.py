@@ -27,7 +27,7 @@ location = os.environ.get("REGION")
 # init vertex ai with project_id and location
 vertexai.init(project=project_id, location=location)
 model = GenerativeModel(
-    model_name="gemini-1.5-flash-002")
+    model_name="gemini-1.5-pro-002")
 
 def generate_greetings():
     """Call the LLM to generate about examples of greetings, and response pairs"""
