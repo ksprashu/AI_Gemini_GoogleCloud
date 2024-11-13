@@ -81,7 +81,7 @@ def create_eval_task(df, model_name):
     return eval_task
 
 
-def run_eval():
+def run_pointwise_eval():
     """Run an evaluation for the responses"""
     gemini_df = get_responses('gemini_responses.json')
     gemini_eval = create_eval_task(gemini_df, 'gemini-flash')
@@ -114,5 +114,5 @@ def run_eval():
 
 
 if __name__ == "__main__":
-    run_eval()
+    run_pointwise_eval()
 
