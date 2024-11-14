@@ -19,7 +19,6 @@ import google.cloud.logging
 client = google.cloud.logging.Client()
 client.setup_logging()
 
-
 # fetch project_id and location from environment
 dotenv.load_dotenv()
 project_id = os.environ.get("PROJECT_ID")
