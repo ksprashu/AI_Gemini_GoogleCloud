@@ -32,21 +32,28 @@ custom_text_quality = PointwiseMetric(
     metric="custom_text_quality",
     metric_prompt_template=PointwiseMetricPromptTemplate(
         criteria={
-            "fluency": (
-                "Sentences flow smoothly and are easy to read, avoiding awkward"
-                " phrasing or run-on sentences. Ideas and sentences connect"
-                " logically, using transitions effectively where needed."
+            "factual_accuracy": (
+                "The response provides accurate and verifiable information."
             ),
-            "entertaining": (
-                "Short, amusing text that incorporates emojis, exclamations and"
-                " questions to convey quick and spontaneous communication and"
-                " diversion."
+            "conciseness": (
+                "The response avoids unnecessary information and gets to the point."
             ),
+            "fluency": ( 
+                "Sentences are clear, well-structured, and easy to read."
+            ),
+            "engagement": (
+                "The response is engaging and keeps the user interested." 
+            ),
+            "relevance": (
+                "The response directly addresses the user's question."
+            )
         },
         rating_rubric={
-            "1": "The response performs well on both criteria.",
-            "0": "The response is somewhat aligned with both criteria",
-            "-1": "The response falls short on both criteria",
+            "5": "Excellent - Meets all criteria exceptionally well.",
+            "4": "Good - Meets most criteria with minor issues.",
+            "3": "Fair - Meets some criteria, but with room for improvement.",
+            "2": "Poor - Meets few criteria, significant issues.",
+            "1": "Very Poor - Barely meets any criteria." 
         },
     ),
 )
