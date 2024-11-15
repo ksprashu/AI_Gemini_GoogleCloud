@@ -15,9 +15,7 @@ import os
 import json
 import dotenv
 import logging
-import google.cloud.logging
-client = google.cloud.logging.Client()
-client.setup_logging()
+
 
 # fetch project_id and location from environment
 dotenv.load_dotenv()
@@ -55,7 +53,7 @@ def convert_to_markdown_headings(text):
 def combine_metadata(metadata):
     """Combines metadata values into a comma-separated string."""
     values = list(metadata.values())
-    return ", ".join(values)
+    return " | ".join(values)
 
 
 def get_chunks(city_name, city_guide):

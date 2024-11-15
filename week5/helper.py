@@ -19,7 +19,7 @@ def store_chat(session_id, message, response, history):
     """Stores the chat history in Firestore and updates it against a UUID."""
 
     try:
-        doc_ref = db.collection("chat_history").document(session_id)
+        doc_ref = db.collection("chat-history").document(session_id)
         # append message and response to a copy of history
         chat_messages = history.copy()
         chat_messages.append({"role": "user", "content": message})

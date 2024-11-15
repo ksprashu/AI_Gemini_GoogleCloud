@@ -11,9 +11,9 @@ import gradio as gr
 
 import logging
 import google.cloud.logging
+
 client = google.cloud.logging.Client()
 client.setup_logging(log_level=logging.INFO)
-
 
 # Use gr.State to store the session ID
 session_id = gr.State(value=helper.generate_session_id())
@@ -35,11 +35,11 @@ def answer_query(message: str, history: list):
     return response
 
 
-def get_rewritten_query(message: str):
+def get_rewritten_query(message: str, history: list):
     """use the rewrite model to rewrite the query"""
     prompt = "Rewrite the following user query and return only the rewritten text and nothing else.\nUser Query: "
     prompt = prompt + message
-
+    
     rewritten_query = rewrite_model.get_response(prompt, [])
     logging.info(f"rewritten query: {rewritten_query}")
 
