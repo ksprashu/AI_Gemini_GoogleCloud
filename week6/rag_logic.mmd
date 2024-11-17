@@ -1,0 +1,22 @@
+flowchart TD
+    U[User] --> |inputs| Q(Query)
+    Q --> TQ{Is travel related?}
+    TQ --> |no| RR[Regret Response]
+    TQ --> |yes| UQ{Is user related?}
+    UQ --> |yes| UR(fetch user data)
+    UQ --> |no| N{Is new query?}
+    UR --> N
+    N --> |yes| RW(Rewrite query)
+    RW --> NT(fetch travel guides)
+    NT --> GF{Guides found?}
+    GF --> |use guides only| C[LLM completion]
+    GF --> |no| RR
+    N --> |no| OT(add history)
+    OT --> |use history| C
+    C --> TR{Answers user?}
+    TR --> |yes| OR(Output Response)
+    TR --> |no| RR
+    RR --> |retry| U
+    OR --> S[Save history]
+    S --> |more?| U
+
