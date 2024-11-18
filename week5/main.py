@@ -35,7 +35,7 @@ def answer_query(message: str, history: list):
     return response
 
 
-def get_rewritten_query(message: str, history: list):
+def get_rewritten_query(message: str):
     """use the rewrite model to rewrite the query"""
     prompt = "Rewrite the following user query and return only the rewritten text and nothing else.\nUser Query: "
     prompt = prompt + message

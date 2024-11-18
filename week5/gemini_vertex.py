@@ -46,6 +46,18 @@ class Gemini():
     def get_response(self, message: str, history: list):
         """Generate a response for user's query"""
 
+        # # TODO: Remove
+        # # pretty print the history list of objects
+        # print("gradio chat history")
+        # import pprint
+        # pp = pprint.PrettyPrinter(indent=4)
+        # pp.pprint(history)
+
+        # print("gemini chat session history")
+        # if self._chat_session is not None and self._chat_session.history:
+        #     print(self._chat_session.history)      
+
+
         # logging.info(f'querying gemini: {message}')
         prompt = message
         start_time = time.time() * 1000
