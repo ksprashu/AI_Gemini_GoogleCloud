@@ -58,7 +58,7 @@ def generate_session_id():
 
 
 # Function to get latest prompts for a given use case
-def get_use_case(use_case):
+def _get_use_case(use_case):
     """Gets the latest prompts for a given use case."""
     try:
         # Get the directory of helper.py
@@ -81,11 +81,10 @@ def get_use_case(use_case):
         return None
 
 
-
 # Gets the latest system prompt for a given model
 def get_system_prompt(use_case):
     """Gets the latest system prompt for a given model."""
-    prompt = get_use_case(use_case)
+    prompt = _get_use_case(use_case)
     if prompt is not None:
         return "\n".join(prompt['system_prompt'])
     else:
@@ -95,9 +94,40 @@ def get_system_prompt(use_case):
 # Gets the latest query prompt for the given use case
 def get_input_prompt(use_case):
     """Gets the latest query prompt for the given use case."""
-    prompt = get_use_case(use_case)
+    prompt = _get_use_case(use_case)
     if prompt is not None:
         return "\n".join(prompt['input_prompt'])
     else:
         return None
     
+def format_chat_history(history: list) -> str: 
+    """merge the chat history into a single string
+    The content from the user and model (assistant) is merged together
+    in the following format
+    User: <user content>
+    Model: <model content>
+    """
+    formatted_history = ""
+    for turn in history:
+        if turn['role'] == 'user':
+            formatted_history += f"User: {turn['content']}\n"
+        else:
+            formatted_history += f"Model: {turn['content']}\n"
+
+    return formatted_history
+
+
+def format_user_docs(user_docs: list) -> str:
+    """merge the user docs into a single string
+    """
+    pass
+
+
+def format_travel_docs(travel_docs: list) -> str:
+    """merge the travel docs into a single string
+    """
+    # loop at each match and append the doc title and doc text
+    for doc in travel_docs:
+        travel_guide = travel_guide + doc.to_dict()['title'] + ":\n" + doc.to_dict()['text'] + "\n\n"
+
+    return travel_guide

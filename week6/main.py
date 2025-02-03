@@ -4,89 +4,108 @@
 
 # from gemini_tuned_vertex import TunedGemini as GenAI
 from gemini_vertex import Gemini as GenAI
-import vector_search
+from chatbot import ChatBot
 import helper
 
 import gradio as gr
 
 import logging
 import google.cloud.logging
+
+# Set the root logger level *first*
+logging.getLogger().setLevel(logging.INFO)
+
+# setup the cloud logging handler
 client = google.cloud.logging.Client()
 client.setup_logging(log_level=logging.INFO)
 
+# Add a StreamHandler for console output
+handler = logging.StreamHandler()
+formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+handler.setFormatter(formatter)
+logging.getLogger().addHandler(handler)
 
-# Use gr.State to store the session ID
+# Print the handlers
+logger = logging.getLogger()
+for handler in logger.handlers:
+    print(handler)
+
+# State variables
 session_id = gr.State(value=helper.generate_session_id())
+user_name = gr.State(value="")  # Initially empty
 
-# instantiate the model for query rewriting
-rewrite_model = GenAI("gemini_tuned_rewrite", False)
-# instantiate the model for chat
-chat_model = GenAI("gemini_tuned", True)
-
-
-def answer_query(message: str, history: list): 
-    """Generate a completion for user's query"""
-    logging.info(f"Calling Model... session: {session_id.value}",
-                 extra={"json_fields": {"session_id": session_id.value}})
-    response = chat_model.get_response(message, history)
-
-    # save chat history into firestore
-    helper.store_chat(session_id.value, message, response, history)
-    return response
-
-
-def get_rewritten_query(message: str):
-    """use the rewrite model to rewrite the query"""
-    prompt = "Rewrite the following user query and return only the rewritten text and nothing else.\nUser Query: "
-    prompt = prompt + message
-
-    rewritten_query = rewrite_model.get_response(prompt, [])
-    logging.info(f"rewritten query: {rewritten_query}")
-
-    return rewritten_query
-
-
-def answer_query_with_rag(message: str, history: list): 
-    """Convert the user query to an embedding, do a match in firestore.
-    Fetch the relevant matching docs and then pass it as context to the model to answer"""
-
-    logging.info(f"Calling Model... session: {session_id.value}",
-                 extra={"json_fields": {"session_id": session_id.value}})
-    logging.info("user query: " + message)
-    query = get_rewritten_query(message)
-    matches = vector_search.find_matching_docs(query)
-
-    prompt = "Answer the user's travel related query below using only the provided extracts.\n\n"
-    prompt = prompt + "User Query: " + query + "\n\n"
-    prompt = prompt + "Travel guide extracts:\n\n"
-
-    # loop at each match and append the doc title and doc text
-    for doc in matches:
-        prompt = prompt + doc.to_dict()['title'] + ":\n" + doc.to_dict()['text'] + "\n\n"
-
-    prompt = prompt + "\nAnswer:"
-    logging.info(f"Token size of prompt: {chat_model.get_tokens(prompt)}")
-    response = chat_model.get_response(prompt, history)
-
-    # save chat history into firestore
-    helper.store_chat(session_id.value, message, response, history)
-    return response
+chat = ChatBot()
+# def answer_query_with_rag(message: str, history: list):
+#     """call the chat model to get a response"""
+#     return chat.answer_query_with_rag(message, history)
 
 
 # start of app | rendering
-demo = gr.ChatInterface(
-    answer_query_with_rag, 
-    type="messages",
-    textbox=gr.Textbox(placeholder="Type in your travel query...", autofocus=True),
-    title="Your Friendly Travel Advisor",
-    description="Plan your travel, get inspired for your next desination, do amazing new activties. Powered by " + chat_model.get_name(),
-    autofocus=True,
-    examples=[
-        ['Give me ideas for a beach vacation', None],
-        ['I want to go on a 3 day safari in Masai Mara. When is the best time to go?', None],
-        ['Build a 5-day itinerary of the best things to do in Bhutan.', None],
-        ['What are the top 5 street food places in Bangalore?', None]
-    ]
-    )
+# demo = gr.ChatInterface(
+#     chat.answer_query_with_rag,
+#     type="messages",
+#     textbox=gr.Textbox(placeholder="Type in your travel query...", autofocus=True),
+#     title="Your Friendly Travel Advisor",
+#     description="Plan your travel, get inspired for your next desination, do amazing new activties",
+#     autofocus=True,
+#     examples=[
+#         ["Give me ideas for a beach vacation", None],
+#         ["I want to go on a 3 day safari in Masai Mara. When is the best time to go?", None],
+#         ["Build a 2-day itinerary of the best things to do in Bhutan.", None],
+#         ["What are the top 5 street food places in Mumbai?", None],
+#     ],
+# )
+# demo.launch()
+
+
+def set_user_name(name):
+    # Log name to firestore or other persistent storage if needed
+    logging.info(f"Setting user name to: {name}")
+    return name
+
+css = """
+h1 {
+    text-align: center;
+    display:block;
+}
+"""
+
+with gr.Blocks(css=css) as demo:
+    gr.Markdown("# Your Friendly Travel Advisor")
+    gr.HTML("<center>Plan your travel, get inspired for your next desination, do amazing new activties.</center>")
+
+    user_name_input = gr.Textbox(label="Your Name/Handle (optional: to preserve state)", lines=1)
+    user_name_input.change(set_user_name, inputs=user_name_input, outputs=user_name) # Update state on change
+
+#     chatbot = gr.Chatbot(elem_id="chatbot", bubble_full_width=False, type="messages")
+
+#     chat_input = gr.MultimodalTextbox(
+#         interactive=True,
+#         file_count="multiple",
+#         placeholder="Type in your travel query...",
+#         show_label=False,
+#         autofocus=True,
+#     )
+
+# chat_input = gr.Textbox(
+#     interactive=True,
+#     placeholder="Type in your travel query...",
+#     show_label=False,
+#     autofocus=True,
+#     # container=False,
+# )
+
+
+# msg = gr.Textbox(placeholder="Type in your travel query...", show_label=False)
+# clear = gr.ClearButton([msg, chatbot])
+
+
+# chat_input.submit(
+#     chat.answer_query_with_rag,
+#     inputs=[chat_input, chatbot],
+#     outputs=chatbot)
+
+# clear = gr.Button("New Chat")
+# clear.click(new_chat, outputs=[session_id, user_name, chatbot], queue=False)  # Clear outputs and reset session
 
 demo.launch()

@@ -10,15 +10,13 @@ import helper
 
 # logger = logging.getLogger(__name__)
 
-class TunedGemini():
+class Gemini():
     """Class that implements methods to invoke the Gemini model"""
-
-    _chat_session = None
-    _model = None
 
     def __init__(self, prompt_name: str, is_chat: bool = True):
         """initialise vertex and other variables"""
 
+        logging.info(f"creating a model with prompt {prompt_name} and is_chat {is_chat}")
         # fetch project_id and location from environment
         dotenv.load_dotenv()
         project_id = os.environ.get("PROJECT_ID")
@@ -27,23 +25,17 @@ class TunedGemini():
         # init vertex ai with project_id and location
         vertexai.init(project=project_id, location=location)
         self._model = GenerativeModel(
-            model_name=self._get_model_endpont('5404654903891066880', project_id, location),
+            model_name="gemini-1.5-flash-002",
             system_instruction=helper.get_system_prompt(prompt_name))
 
         if is_chat:
             self._chat_session = self._model.start_chat()
-
-
-    def _get_model_endpont(self, endpoint_id: int, project_id: str, location: str):
-        """build then endpoint in the following format.
-        projects/<projectid/locations/<region>/endpoints/<endpointid>
-        """
-        logging.info(f"endpoint_id: {endpoint_id}")
-        return f"projects/{project_id}/locations/{location}/endpoints/{endpoint_id}"
+        else:
+            self._chat_session = None
 
 
     def get_name(self):
-        return "Gemini Travel-tuned model"
+        return "Gemini 1.5 Flash"
 
 
     def get_tokens(self, message: str):
@@ -54,13 +46,26 @@ class TunedGemini():
     def get_response(self, message: str, history: list):
         """Generate a response for user's query"""
 
+        # TODO: Remove
+        # pretty print the history list of objects
+        print("gradio chat history")
+        import pprint
+        pp = pprint.PrettyPrinter(indent=4)
+        pp.pprint(history)
+
+        print("gemini chat session history")
+        if self._chat_session is not None and self._chat_session.history:
+            print(self._chat_session.history)      
+
+
         # logging.info(f'querying gemini: {message}')
         prompt = message
-
         start_time = time.time() * 1000
         if self._chat_session is None:
+            logging.info("Generating content without chat model")
             response = self._model.generate_content(prompt)
         else:   
+            logging.info("Generating content with chat model")
             response = self._chat_session.send_message(prompt)
         endtime = time.time() * 1000
 
@@ -81,3 +86,4 @@ class TunedGemini():
     def start_new_chat(self):
         """erases the current session and starts a new chat session"""
         self._chat_session = self._model.start_chat()
+
